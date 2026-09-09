@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>项目起落录 — 两个月，两个项目</title>
+    <style>
+        :root {
+            --bg: #f7f5f2;
+            --card: #ffffff;
+            --text: #2d2a26;
+            --text-light: #6b6560;
+            --border: #e0dbd5;
+            --up: #5a8f6e;
+            --up-light: #e8f5ec;
+            --down: #c47a5a;
+            --down-light: #fdeee8;
+            --crisis: #b85450;
+            --crisis-light: #fde8e8;
+            --flat: #8a9aaa;
+            --flat-light: #eef1f4;
+            --accent: #b8956a;
+            --line: #d0c8c0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+            background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+        }
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            margin-bottom: 0.8rem;
+        }
+        header p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        header .meta {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            letter-spacing: 2px;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        .legend-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+
+        /* Project Block */
+        .project {
+            max-width: 1100px;
+            margin: 0 auto 4rem;
+            padding: 0 1.5rem;
+        }
+        .project-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+        .project-tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            background: var(--flat-light);
+            color: var(--flat);
+            letter-spacing: 1px;
+        }
+        .project-info {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-left: auto;
+        }
+
+        /* Timeline Wave */
+        .wave-container {
+            position: relative;
+            padding: 2rem 0 3rem;
+            overflow-x: auto;
+        }
+        .wave-svg {
+            width: 100%;
+            min-width: 900px;
+            height: 200px;
+        }
+        .wave-path {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .wave-area {
+            opacity: 0.12;
+        }
+        .wave-node {
+            cursor: pointer;
+            transition: r 0.3s;
+        }
+        .wave-node:hover {
+            r: 10;
+        }
+        .wave-label {
+            font-size: 11px;
+            fill: var(--text-light);
+            text-anchor: middle;
+        }
+        .wave-label-up { fill: var(--up); font-weight: 600; }
+        .wave-label-down { fill: var(--down); font-weight: 600; }
+        .wave-label-crisis { fill: var(--crisis); font-weight: 600; }
+
+        /* Phase Cards */
+        .phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .phase-card {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 1.2rem 1.4rem;
+            border: 1px solid var(--border);
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .phase-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        }
+        .phase-status-bar {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            border-radius: 8px 0 0 8px;
+        }
+        .phase-card.up .phase-status-bar { background: var(--up); }
+        .phase-card.down .phase-status-bar { background: var(--down); }
+        .phase-card.crisis .phase-status-bar { background: var(--crisis); }
+        .phase-card.flat .phase-status-bar { background: var(--flat); }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.6rem;
+        }
+        .phase-status {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .phase-card.up .phase-status { background: var(--up-light); color: var(--up); }
+        .phase-card.down .phase-status { background: var(--down-light); color: var(--down); }
+        .phase-card.crisis .phase-status { background: var(--crisis-light); color: var(--crisis); }
+        .phase-card.flat .phase-status { background: var(--flat-light); color: var(--flat); }
+
+        .phase-date {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-left: auto;
+        }
+        .phase-title {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+        .phase-events {
+            list-style: none;
+            margin-bottom: 0.8rem;
+        }
+        .phase-events li {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            padding: 0.2rem 0;
+            padding-left: 1rem;
+            position: relative;
+        }
+        .phase-events li::before {
+            content: '·';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .phase-deliverables {
+            margin-top: 0.6rem;
+            padding-top: 0.6rem;
+            border-top: 1px dashed var(--border);
+        }
+        .deliverables-label {
+            font-size: 0.7rem;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+        .deliverable-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            padding: 0.2rem 0.6rem;
+            margin: 0.15rem 0.3rem 0.15rem 0;
+            border-radius: 4px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text-light);
+        }
+
+        /* Milestone */
+        .milestone {
+            background: linear-gradient(135deg, #fff 0%, var(--up-light) 100%);
+            border: 1px solid var(--up);
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .milestone-title {
+            font-size: 0.85rem;
+            color: var(--up);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .milestone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .milestone-item {
+            font-size: 0.9rem;
+        }
+        .milestone-item strong {
+            display: block;
+            font-size: 1.1rem;
+            color: var(--up);
+            margin-bottom: 0.2rem;
+        }
+        .milestone-item span {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        /* Compare */
+        .compare-section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .compare-table th {
+            background: var(--bg);
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 1px solid var(--border);
+        }
+        .compare-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+        .compare-table tr:last-child td { border-bottom: none; }
+        .compare-table td:first-child {
+            font-weight: 500;
+            color: var(--text);
+            background: var(--bg);
+            width: 140px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            header h1 { font-size: 1.6rem; }
+            .wave-svg { min-width: 700px; }
+            .project-header { flex-wrap: wrap; }
+            .project-info { margin-left: 0; width: 100%; margin-top: 0.5rem; }
+            .compare-table { font-size: 0.85rem; }
+            .compare-table td, .compare-table th { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>项目起落录</h1>
+    <p>两个月，两个项目，一条起起落落的交付线</p>
+    <div class="meta">2025.3 — 2025.5</div>
+</header>
+
+<div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--up)"></div> 顺利推进</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--flat)"></div> 平稳/停滞</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--down)"></div> 迷茫/回落</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--crisis)"></div> 危机/崩塌</div>
+</div>
+
+<!-- ============ PROJECT 1 ============ -->
+<div class="project">
+    <div class="project-header">
+        <h2 class="project-title">项目一：联想 AI Product Portfolio</h2>
+        <span class="project-tag">~5周</span>
+        <div class="project-info">管总 · 米诺 · 紫月 · Christine · Raymond</div>
+    </div>
+
+    <!-- Wave Chart -->
+    <div class="wave-container">
+        <svg class="wave-svg" viewBox="0 0 900 200" preserveAspectRatio="none">
+            <!-- Gradient area -->
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--up);stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:var(--up);stop-opacity:0" />
+                </linearGradient>
+            </defs>
+            <!-- Area fill -->
+            <path class="wave-area" d="M50,160 L180,140 L310,80 L440,60 L570,170 L700,180 L810,170 L850,165 L850,200 L50,200 Z" fill="url(#grad1)"/>
+            <!-- Line -->
+            <path class="wave-path" d="M50,160 L180,140 L310,80 L440,60 L570,170 L700,180 L810,170 L850,165" stroke="var(--up)"/>
+            <!-- Crisis segment -->
+            <path class="wave-path" d="M440,60 L500,150 L570,170 L640,185 L700,180" stroke="var(--crisis)" style="stroke-dasharray:6,4"/>
+            <path class="wave-path" d="M700,180 L755,175 L810,170 L850,165" stroke="var(--flat)"/>
+
+            <!-- Nodes -->
+            <circle cx="50" cy="160" r="7" fill="var(--down)" class="wave-node"/>
+            <circle cx="180" cy="140" r="6" fill="var(--flat)" class="wave-node"/>
+            <circle cx="310" cy="80" r="7" fill="var(--up)" class="wave-node"/>
+            <circle cx="440" cy="60" r="8" fill="var(--up)" class="wave-node"/>
+            <circle cx="500" cy="150" r="8" fill="var(--crisis)" class="wave-node"/>
+            <circle cx="570" cy="170" r="9" fill="var(--crisis)" class="wave-node"/>
+            <circle cx="640" cy="185" r="7" fill="var(--down)" class="wave-node"/>
+            <circle cx="700" cy="180" r="6" fill="var(--flat)" class="wave-node"/>
+            <circle cx="810" cy="170" r="6" fill="var(--flat)" class="wave-node"/>
+
+            <!-- Labels -->
+            <text x="50" y="130" class="wave-label wave-label-down">启动迷茫</text>
+            <text x="310" y="60" class="wave-label wave-label-up">方向确立</text>
+            <text x="440" y="40" class="wave-label wave-label-up">加速交付</text>
+            <text x="535" y="120" class="wave-label wave-label-crisis">崩塌</text>
+            <text x="640" y="210" class="wave-label wave-label-down">烂尾</text>
+            <text x="780" y="155" class="wave-label">合同到期不散</text>
+        </svg>
+    </div>
+
+    <!-- Phase Cards -->
+    <div class="phases">
+        <div class="phase-card down">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">落</span>
+                <span class="phase-date">3.31 — 4.15</span>
+            </div>
+            <div class="phase-title">启动与迷茫</div>
+            <ul class="phase-events">
+                <li>花一周理解项目背景，又一周了解"我们在干啥"</li>
+                <li>AI 大 topic 下具体打哪条线，长期没对齐</li>
+                <li>前不着村后不着店，"像海上漂的迷茫的船"</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">项目背景研究</span>
+                <span class="deliverable-tag">行业 case 收集</span>
+                <span class="deliverable-tag">survey 整理</span>
+            </div>
+        </div>
+
+        <div class="phase-card up">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">起</span>
+                <span class="phase-date">4.16 — 4.24</span>
+            </div>
+            <div class="phase-title">方向确立与加速</div>
+            <ul class="phase-events">
+                <li>4.16 团队 make consensus：AI product portfolio，4个产品展开</li>
+                <li>进入固定流程：priority、BLP、Roadmap、cost</li>
+                <li>4.20 德国总汇报，top priority 片子，补 2-3 张</li>
+                <li>4.24 见德国总，整体聊得不错</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">德国总汇报材料</span>
+                <span class="deliverable-tag">Priority Matrix</span>
+                <span class="deliverable-tag">BLP 设计</span>
+                <span class="deliverable-tag">Industry Trend</span>
+                <span class="deliverable-tag">AI 产品架构图</span>
+            </div>
+        </div>
+
+        <div class="phase-card crisis">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">炸</span>
+                <span class="phase-date">4.27 — 4.28</span>
+            </div>
+            <div class="phase-title">崩塌与重建</div>
+            <ul class="phase-events">
+                <li>4.27 两个 A 拍一整天拍不出管总想要的，管总质问米诺</li>
+                <li>4.28 管总推掉一周所有 products 工作，批评 AI 使用无判断</li>
+                <li>米诺被批评后，一人干 4 人活，从白天干到晚上</li>
+                <li>4.28 晚 reads 会，三个 A 讲了一整场</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">产品3/4 方案（推翻后重拍）</span>
+                <span class="deliverable-tag">Roadmap 重制</span>
+                <span class="deliverable-tag">Reads 汇报材料</span>
+            </div>
+        </div>
+
+        <div class="phase-card flat">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">平</span>
+                <span class="phase-date">4.29 — 4.30</span>
+            </div>
+            <div class="phase-title">烂尾与倦怠</div>
+            <ul class="phase-events">
+                <li>4.27 合同到期，但项目结束不了，"帮客户做的算什么呢？"</li>
+                <li>团队佛了，米诺 fly back，大家没事做</li>
+                <li>无明确收尾，团队各自散去</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">零散修改</span>
+                <span class="deliverable-tag">签证材料（顺手）</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Milestone -->
+    <div class="milestone">
+        <div class="milestone-title">项目一 关键产出总结</div>
+        <div class="milestone-grid">
+            <div class="milestone-item"><strong>4 个 AI 产品</strong><span>Product Portfolio 全案</span></div>
+            <div class="milestone-item"><strong>Roadmap + Priority</strong><span>三年规划被压缩</span></div>
+            <div class="milestone-item"><strong>德国总汇报</strong><span>1 轮高层汇报</span></div>
+            <div class="milestone-item"><strong>BLP / Cost</strong><span>商业落地路径</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ PROJECT 2 ============ -->
+<div class="project">
+    <div class="project-header">
+        <h2 class="project-title">项目二：Voice of AI</h2>
+        <span class="project-tag">~4周</span>
+        <div class="project-info">管总 · 米诺(前期) · Mandi · 紫月 · Raymond</div>
+    </div>
+
+    <!-- Wave Chart -->
+    <div class="wave-container">
+        <svg class="wave-svg" viewBox="0 0 900 200" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--up);stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:var(--up);stop-opacity:0" />
+                </linearGradient>
+            </defs>
+            <!-- Area -->
+            <path class="wave-area" d="M50,140 L150,120 L280,70 L400,80 L500,170 L600,175 L720,90 L850,60 L850,200 L50,200 Z" fill="url(#grad2)"/>
+            <!-- Main line -->
+            <path class="wave-path" d="M50,140 L150,120 L280,70 L400,80" stroke="var(--up)"/>
+            <!-- Crisis -->
+            <path class="wave-path" d="M400,80 L450,160 L500,170 L550,180 L600,175" stroke="var(--crisis)" style="stroke-dasharray:6,4"/>
+            <!-- Recovery -->
+            <path class="wave-path" d="M600,175 L660,130 L720,90 L790,75 L850,60" stroke="var(--up)"/>
+
+            <!-- Nodes -->
+            <circle cx="50" cy="140" r="6" fill="var(--flat)" class="wave-node"/>
+            <circle cx="150" cy="120" r="6" fill="var(--up)" class="wave-node"/>
+            <circle cx="280" cy="70" r="8" fill="var(--up)" class="wave-node"/>
+            <circle cx="400" cy="80" r="7" fill="var(--up)" class="wave-node"/>
+            <circle cx="500" cy="170" r="9" fill="var(--crisis)" class="wave-node"/>
+            <circle cx="600" cy="175" r="8" fill="var(--crisis)" class="wave-node"/>
+            <circle cx="720" cy="90" r="8" fill="var(--up)" class="wave-node"/>
+            <circle cx="850" cy="60" r="9" fill="var(--up)" class="wave-node"/>
+
+            <!-- Labels -->
+            <text x="100" y="105" class="wave-label wave-label-up">接力启动</text>
+            <text x="280" y="50" class="wave-label wave-label-up">蜜月期</text>
+            <text x="500" y="150" class="wave-label wave-label-crisis">Mandi 技术翻车</text>
+            <text x="600" y="200" class="wave-label wave-label-crisis">米诺下项目</text>
+            <text x="720" y="70" class="wave-label wave-label-up">被迫独立</text>
+            <text x="850" y="45" class="wave-label wave-label-up">客户认可 + 复盘</text>
+        </svg>
+    </div>
+
+    <!-- Phase Cards -->
+    <div class="phases">
+        <div class="phase-card up">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">起</span>
+                <span class="phase-date">5.6 — 5.9</span>
+            </div>
+            <div class="phase-title">接力启动</div>
+            <ul class="phase-events">
+                <li>Jack 结项会，前项目收尾，Voice of AI 同步启动</li>
+                <li>团队配置变化：米诺 + Mandi(SC) + 紫月 + Raymond</li>
+                <li>你开始深入做 Voice of AI 研究调研</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">Voice of AI 研究调研</span>
+                <span class="deliverable-tag">技术路径对比</span>
+                <span class="deliverable-tag">PPT 初稿</span>
+            </div>
+        </div>
+
+        <div class="phase-card up">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">起</span>
+                <span class="phase-date">5.11 — 5.14</span>
+            </div>
+            <div class="phase-title">蜜月推进</div>
+            <ul class="phase-events">
+                <li>5.11 米诺推进上海出差，团队氛围好</li>
+                <li>5.12 画 S2S 片子、改德国片子</li>
+                <li>5.13 出差申请被拒，但工作继续</li>
+                <li>5.14 讨论全双工技术方案</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">S2S 架构图</span>
+                <span class="deliverable-tag">德国片子修改版</span>
+                <span class="deliverable-tag">Design 方案（3张）</span>
+                <span class="deliverable-tag">全双工技术讨论纪要</span>
+            </div>
+        </div>
+
+        <div class="phase-card crisis">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">炸</span>
+                <span class="phase-date">5.15</span>
+            </div>
+            <div class="phase-title">能力信任危机</div>
+            <ul class="phase-events">
+                <li>Mandi 做云服 vs Retail 对标，连技术路径差异（Pipeline vs S2S Hybrid）都没发现</li>
+                <li>"比较苹果和黄瓜，连一个是水果一个是蔬菜都说不出来"</li>
+                <li>米诺选择息事宁人，不拆穿</li>
+                <li>米诺离开前说"好自为之"</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">对标分析（存疑，后被推翻）</span>
+                <span class="deliverable-tag">S2S 深入分析</span>
+            </div>
+        </div>
+
+        <div class="phase-card crisis">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">炸</span>
+                <span class="phase-date">5.19 — 5.20</span>
+            </div>
+            <div class="phase-title">人员地震</div>
+            <ul class="phase-events">
+                <li>5.19 Cherry 以成本为由，想让米诺下项目</li>
+                <li>逻辑：紫月太能干 → 不需要 PM 了</li>
+                <li>5.20 三个和尚没水喝：米诺不投入、Mandi 不懂、管总忙</li>
+                <li>项目推进实质停滞</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">零散维护</span>
+                <span class="deliverable-tag">（无实质性新交付）</span>
+            </div>
+        </div>
+
+        <div class="phase-card up">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">起</span>
+                <span class="phase-date">5.22 — 5.27</span>
+            </div>
+            <div class="phase-title">被迫独立与反弹</div>
+            <ul class="phase-events">
+                <li>5.22 管总让你"当经理带项目"，Mandi 问你 scenario 怎么做</li>
+                <li>你帮 Mandi 片子重画练习（留在自己电脑）</li>
+                <li>5.27 客户会：Mandi 讲不到重点，Raymond 没两句话，你接管主讲</li>
+                <li>客户反馈："今天的内容还挺好的"</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">客户汇报材料（主讲版）</span>
+                <span class="deliverable-tag">Scenario 方案</span>
+                <span class="deliverable-tag">Feature & Scenario 配套</span>
+            </div>
+        </div>
+
+        <div class="phase-card up">
+            <div class="phase-status-bar"></div>
+            <div class="phase-header">
+                <span class="phase-status">起</span>
+                <span class="phase-date">5.31</span>
+            </div>
+            <div class="phase-title">收尾与复盘</div>
+            <ul class="phase-events">
+                <li>管总周末电话：推荐你给高层讲 AI</li>
+                <li>项目正式收尾，明天去 EKM 新项目</li>
+            </ul>
+            <div class="phase-deliverables">
+                <div class="deliverables-label">交付物</div>
+                <span class="deliverable-tag">最终版 30 张片子</span>
+                <span class="deliverable-tag">S2S 全面分析</span>
+                <span class="deliverable-tag">Price Modeling</span>
+                <span class="deliverable-tag">Performance Matrix & Map</span>
+                <span class="deliverable-tag">Feature + Scenario（4模块）</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Milestone -->
+    <div class="milestone">
+        <div class="milestone-title">项目二 关键产出总结</div>
+        <div class="milestone-grid">
+            <div class="milestone-item"><strong>30 张片子</strong><span>紫月独立产出 16 张</span></div>
+            <div class="milestone-item"><strong>6 个工作模块</strong><span>独立完成 4 个</span></div>
+            <div class="milestone-item"><strong>S2S 全案分析</strong><span>技术路径深度对比</span></div>
+            <div class="milestone-item"><strong>3 轮客户汇报</strong><span>最终轮独立主讲</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ COMPARE ============ -->
+<div class="compare-section">
+    <div class="project-header" style="border:none; margin-bottom:1.5rem;">
+        <h2 class="project-title" style="font-size:1.2rem;">两项目对比</h2>
+    </div>
+    <table class="compare-table">
+        <tr>
+            <th>维度</th>
+            <th>项目一：联想 AI Product Portfolio</th>
+            <th>项目二：Voice of AI</th>
+        </tr>
+        <tr>
+            <td>周期</td>
+            <td>~5 周（3月底 — 4月底）</td>
+            <td>~4 周（5月初 — 5月底）</td>
+        </tr>
+        <tr>
+            <td>PM 稳定性</td>
+            <td>米诺全程在场</td>
+            <td>米诺前期在场，中期被撤</td>
+        </tr>
+        <tr>
+            <td>核心危机</td>
+            <td>管总推翻一周工作，产品从 5 个变回 4 个</td>
+            <td>Mandi 技术翻车 + 米诺下项目</td>
+        </tr>
+        <tr>
+            <td>收尾方式</td>
+            <td>合同到期不散，无明确收尾</td>
+            <td>有复盘、有数据、被推荐</td>
+        </tr>
+        <tr>
+            <td>你的产出</td>
+            <td>BLP、Roadmap、Priority Matrix、德国总汇报材料</td>
+            <td>30 张片子（16 张独立）、S2S 全案、Price Modeling、客户汇报主讲</td>
+        </tr>
+        <tr>
+            <td>角色变化</td>
+            <td>画手 → 模块负责人</td>
+            <td>大头兵 → 实际副 PM → 独立带客户</td>
+        </tr>
+    </table>
+</div>
+
+<footer>
+    项目起落录 · 基于 2025.4 — 2025.5 工作日记整理
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好自为之 — 一个咨询小A的两个月</title>
+    <style>
+        :root {
+            --bg-primary: #faf8f5;
+            --bg-secondary: #f5f0e8;
+            --bg-accent: #e8e0d4;
+            --text-primary: #2c2419;
+            --text-secondary: #5c4d3c;
+            --text-muted: #8a7a6a;
+            --accent-warm: #b87333;
+            --accent-rose: #c4a484;
+            --border-light: #ddd5c8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Noto Serif SC', 'PingFang SC', serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Cover */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+        }
+
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 80px;
+            background: var(--accent-warm);
+            opacity: 0.4;
+        }
+
+        .cover-subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .cover-title {
+            font-size: 3.2rem;
+            font-weight: 400;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .cover-divider {
+            width: 60px;
+            height: 1px;
+            background: var(--accent-warm);
+            margin: 2rem auto;
+        }
+
+        .cover-quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            max-width: 500px;
+            line-height: 2;
+        }
+
+        .cover-meta {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        /* Navigation */
+        .nav-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .nav-fixed a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-fixed a:hover {
+            color: var(--accent-warm);
+        }
+
+        .nav-fixed a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent-warm);
+            transition: width 0.3s;
+        }
+
+        .nav-fixed a:hover::after {
+            width: 100%;
+        }
+
+        /* Sections */
+        .section {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 400;
+            letter-spacing: 4px;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .section-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            margin-bottom: 3rem;
+        }
+
+        .prologue-text {
+            font-size: 1.05rem;
+            line-height: 2.2;
+            color: var(--text-secondary);
+        }
+
+        .prologue-text p {
+            margin-bottom: 1.5rem;
+            text-indent: 2em;
+        }
+
+        /* Act Header */
+        .act-header {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--bg-secondary);
+            margin: 0;
+        }
+
+        .act-label {
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: var(--accent-warm);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .act-title {
+            font-size: 2rem;
+            font-weight: 400;
+            letter-spacing: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .act-theme {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: linear-gradient(180deg, var(--accent-warm) 0%, var(--border-light) 100%);
+        }
+
+        /* Chapter Card */
+        .chapter {
+            position: relative;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .chapter:last-child {
+            border-bottom: none;
+        }
+
+        .chapter-dot {
+            position: absolute;
+            left: -3.35rem;
+            top: 0.5rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 2px solid var(--accent-warm);
+        }
+
+        .chapter-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .chapter-number {
+            font-size: 0.8rem;
+            color: var(--accent-warm);
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .chapter-title {
+            font-size: 1.4rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+        }
+
+        .chapter-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-left: auto;
+        }
+
+        .chapter-mood {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            background: var(--bg-accent);
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .chapter-content {
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .chapter-content p {
+            margin-bottom: 1rem;
+        }
+
+        .chapter-quote {
+            margin: 1.5rem 0;
+            padding: 1.5rem 2rem;
+            border-left: 2px solid var(--accent-rose);
+            background: var(--bg-secondary);
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .chapter-quote .source {
+            display: block;
+            margin-top: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: normal;
+        }
+
+        .chapter-insight {
+            margin-top: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-radius: 4px;
+            border: 1px solid var(--border-light);
+        }
+
+        .chapter-insight-label {
+            font-size: 0.75rem;
+            color: var(--accent-warm);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-insight-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        /* Objects section */
+        .objects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .object-card {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            border: 1px solid var(--border-light);
+        }
+
+        .object-card h4 {
+            font-size: 0.9rem;
+            color: var(--accent-warm);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .object-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Epilogue */
+        .epilogue {
+            background: var(--bg-secondary);
+            padding: 5rem 2rem;
+            text-align: center;
+        }
+
+        .epilogue-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .epilogue-text {
+            font-size: 1.1rem;
+            line-height: 2.4;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .epilogue-text p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint span {
+            display: block;
+            width: 1px;
+            height: 40px;
+            background: var(--accent-warm);
+            margin: 0 auto;
+            opacity: 0.4;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .cover-title {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+            .section {
+                padding: 3rem 1.5rem;
+            }
+            .timeline {
+                padding-left: 2rem;
+            }
+            .chapter-dot {
+                left: -2.35rem;
+            }
+            .nav-fixed {
+                gap: 1rem;
+                font-size: 0.75rem;
+                padding: 0.8rem 1rem;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav-fixed">
+        <a href="#prologue">引言</a>
+        <a href="#act1">第一幕</a>
+        <a href="#act2">第二幕</a>
+        <a href="#act3">第三幕</a>
+        <a href="#epilogue">尾声</a>
+    </nav>
+
+    <!-- Cover -->
+    <header class="cover">
+        <div class="cover-subtitle">回忆录大纲</div>
+        <h1 class="cover-title">好自为之</h1>
+        <div class="cover-divider"></div>
+        <p class="cover-quote">
+            跟米诺在一个项目的时间，像是偷来的。<br>
+            时间久了，你会发现，不知道什么才是你真正的生活。
+        </p>
+        <div class="cover-meta">2025年4月 — 5月 · 北京</div>
+        <div class="scroll-hint"><span></span></div>
+    </header>
+
+    <!-- Prologue -->
+    <section id="prologue" class="section">
+        <h2 class="section-title">引言</h2>
+        <div class="section-subtitle">为什么要写这两个月</div>
+        <div class="prologue-text">
+            <p>两个月后回看，发现这两个月被压缩得像两年。两个项目，两个老板，一个米诺，一群同事。</p>
+            <p>咨询公司最残酷的不是工作量，是"算钱"；最珍贵的不是技能，是"被谁看见"。</p>
+            <p>这本回忆录不按纯时间线写，而按<strong>情感阶段</strong>写——因为这两个月的经历本身就有很强的戏剧结构：从一个手快听话的小A，到能独立带模块、对接客户、被EP推荐的人。</p>
+            <p>而贯穿始终的，是和米诺这段师徒关系：从仰望，到依赖，到被迫分离。</p>
+        </div>
+    </section>
+
+    <!-- Act 1 -->
+    <header id="act1" class="act-header">
+        <div class="act-label">第一幕</div>
+        <h2 class="act-title">学徒</h2>
+        <p class="act-theme">"我不算 new A" — 被看见的感觉</p>
+    </header>
+
+    <section class="section">
+        <div class="timeline">
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第一章</span>
+                    <h3 class="chapter-title">发票危机</h3>
+                    <span class="chapter-date">4月15日</span>
+                </div>
+                <span class="chapter-mood">紧张 · 懵懂</span>
+                <div class="chapter-content">
+                    <p>1616元发票不合规，财务找上门。你以为是小事，米诺回来后却很紧张。你以为自己只是垫了钱，不知道已经踩进了合规的红线。</p>
+                    <p>米诺嘴上说着"performance关键阶段不想节外生枝"，背地里却陪你翻员工手册找退路。</p>
+                    <div class="chapter-quote">
+                        "他说这可能是一个合规的问题，就是他现在又是这种 performance 的关键阶段，所以说他不太想去节外生枝。"
+                        <span class="source">—— 4月15日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">心路</div>
+                    <div class="chapter-insight-text">从"无所谓"到"紧张"——发现职场不是学校，合规是红线。米诺的第一课不是教你怎么报发票，是让你知道<strong>有人在替你扛</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第二章</span>
+                    <h3 class="chapter-title">审美焦虑</h3>
+                    <span class="chapter-date">4月15日 — 21日</span>
+                </div>
+                <span class="chapter-mood">失落 · 自省</span>
+                <div class="chapter-content">
+                    <p>帮米诺画片子，他找Christine重画；他反复夸Christine画的好看。你第一次意识到，在咨询行业，"好看"也是一种硬通货。</p>
+                    <p>但你同时发现，自己是一个"以结果为导向、粗线条、在乎逻辑和速度"的人。妈妈说："总要给别人留口活路，你不能什么都是最优秀。"</p>
+                    <div class="chapter-quote">
+                        "我可能就是一个相对比较粗线条的，比较在乎整个逻辑感，或者是说整体的一个呈现，或者是说速度，或者是说把这个事交付出来的一个人。"
+                        <span class="source">—— 4月21日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">心路</div>
+                    <div class="chapter-insight-text">从"有点难过"到接受自己的定位。这不是认输，是<strong>自我认知的第一次校准</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第三章</span>
+                    <h3 class="chapter-title">米诺的职场课</h3>
+                    <span class="chapter-date">4月15日 午餐</span>
+                </div>
+                <span class="chapter-mood">顿悟 · 沉淀</span>
+                <div class="chapter-content">
+                    <p>你讲起过去在甲方跑data但business不背书的故事。米诺说："你汇报的人错了。你没有找到这个人真正的KPI是什么。技术永远支持业务。"</p>
+                    <p>这是Junior思维和咨询思维的分水岭：前者觉得data跑出来就OK了，后者知道要帮对方实现KPI。</p>
+                    <div class="chapter-quote">
+                        "技术是永远是支持业务的，那你应该是站在业务的角度去思考问题。"
+                        <span class="source">—— 米诺 · 4月15日</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">意义</div>
+                    <div class="chapter-insight-text">这是你和米诺真正的起点。他不只教你画片子，教你的是<strong>思维方式</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第四章</span>
+                    <h3 class="chapter-title">被信任的重量</h3>
+                    <span class="chapter-date">4月20日 — 22日</span>
+                </div>
+                <span class="chapter-mood">充实 · 被认可</span>
+                <div class="chapter-content">
+                    <p>德国总汇报的片子，米诺拉着你一页一页改。你主动承担晚上改管总推翻的产品方案，管总和米诺都非常认可。</p>
+                    <p>Raymond当面拒绝米诺的任务，你10分钟画完。差距开始显现。</p>
+                    <div class="chapter-quote">
+                        "明天的片子对于他来说现在就是 top priority，他必须要拉一个人能把他所有把这东西弄完且不像 Raymond 那样拖拖拉拉。"
+                        <span class="source">—— 4月20日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">心路</div>
+                    <div class="chapter-insight-text">从"交付快"到"被信任"。你第一次意识到，米诺在交付角度是认可你的——<strong>他选你，是因为你靠谱</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第五章</span>
+                    <h3 class="chapter-title">仍然是个小A</h3>
+                    <span class="chapter-date">4月23日 — 24日</span>
+                </div>
+                <span class="chapter-mood">挫败 · 观察</span>
+                <div class="chapter-content">
+                    <p>Assumption搞错，被管总骂"你都不知道你在做什么项目"。刚觉得自己被信任，马上犯错。</p>
+                    <p>你开始观察米诺的处事风格：解决问题导向而非情绪导向，叫别人哥哥姐姐放低姿态，表面讲究实则务实。</p>
+                    <div class="chapter-quote">
+                        "与其说针锋相对，他选择绕开。与其我们去跟保安争执，米诺的意思就是说，你们完全可以换一个门再进来。"
+                        <span class="source">—— 4月24日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">收获</div>
+                    <div class="chapter-insight-text">膨胀与收缩交替进行。但你在观察米诺的过程中，<strong>学到了另一种处世哲学</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第六章</span>
+                    <h3 class="chapter-title">项目一的尾声</h3>
+                    <span class="chapter-date">4月27日 — 30日</span>
+                </div>
+                <span class="chapter-mood">倦怠 · 期待</span>
+                <div class="chapter-content">
+                    <p>请假困难、拍产品3和4得到管总认可。你评价那两个A："不擅长沟通又不擅长思考，硬拍只会把自己拍崩溃。"</p>
+                    <p>项目本该结束但结束不了，合同到期却还在继续。五一前的倦怠：活儿10分钟干完，和管总面面相觑，12点一起走。</p>
+                    <div class="chapter-quote">
+                        "关键是我们现在其实没有什么东西。因为我们要在改这个产品的形态。"
+                        <span class="source">—— 4月24日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">转折</div>
+                    <div class="chapter-insight-text">EKM面试通过，Tom选了你。<strong>外部世界开始给你反馈了</strong>。</div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Act 2 -->
+    <header id="act2" class="act-header">
+        <div class="act-label">第二幕</div>
+        <h2 class="act-title">共谋者</h2>
+        <p class="act-theme">"跟他的时间像是偷来的" — 偏爱与庇护</p>
+    </header>
+
+    <section class="section">
+        <div class="timeline">
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第七章</span>
+                    <h3 class="chapter-title">入场 Voice of AI</h3>
+                    <span class="chapter-date">5月6日 — 9日</span>
+                </div>
+                <span class="chapter-mood">松弛 · 思考</span>
+                <div class="chapter-content">
+                    <p>五一后返工，米诺使眼色让你走被管总拦住。你撞门磕破嘴，米诺吓坏。</p>
+                    <p>火锅夜聊是全书最松弛也最深刻的场景：聊甲乙方的选择，米诺劝你走，你说"我最大的优势就是忽悠人"。</p>
+                    <div class="chapter-quote">
+                        "甲方你要主动找事情去证明自己的价值，而乙方就很简单，把事情做好就行。"
+                        <span class="source">—— Raymond · 5月9日火锅夜</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "很多顾问做了两年左右，就会发现自己做的东西没有太多意义和价值，就是个大忽悠。我说我在这里3个月就意识到了。"
+                        <span class="source">—— 5月9日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">心路</div>
+                    <div class="chapter-insight-text">从焦虑到"既来之则安之"。你接受了乙方的身份，也接受了<strong>"忽悠"作为核心技能</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第八章</span>
+                    <h3 class="chapter-title">我的人</h3>
+                    <span class="chapter-date">5月11日</span>
+                </div>
+                <span class="chapter-mood">震动 · 被保护</span>
+                <div class="chapter-content">
+                    <p>米诺问你愿不愿意去上海出差。更大的事件是：春总让你补CPD学时，米诺直接在群里跟春总吵，不让你接不该你做的事。</p>
+                    <p>他说："明哥的人不能用，我的人凭什么就能用？"</p>
+                    <div class="chapter-quote">
+                        "我觉得他就是呼应上周五吃火锅的时候聊的天，他可能觉得我太软弱了，什么事都会接。"
+                        <span class="source">—— 5月11日日记</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "确实莫名其妙，米诺帮着我去跟我老板吵架，你敢相信？"
+                        <span class="source">—— 5月11日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">心路</div>
+                    <div class="chapter-insight-text">这是全书情感高潮之一。米诺的偏爱分四层：替你争工作、替你挡老板、替你示范"怎么拒绝"、说"我的人"。<strong>你第一次有了"被护着"的感觉</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第九章</span>
+                    <h3 class="chapter-title">出差被拒与肯德基</h3>
+                    <span class="chapter-date">5月13日</span>
+                </div>
+                <span class="chapter-mood">委屈 · 被安慰</span>
+                <div class="chapter-content">
+                    <p>春总不同意出差，因为要省钱。管总和米诺都很为难。</p>
+                    <p>米诺感受到你不开心，请你去吃肯德基。他说希望你"去体验一下出差的感觉"——他观察到你的压力和身体状态。</p>
+                    <div class="chapter-quote">
+                        "他希望我去体验体验出差的感觉。可能他觉得就是他也可能能观察到我这段时间压力比较大吧，身体状态也不是很好，就觉得说想让换个环境。"
+                        <span class="source">—— 5月13日日记</span>
+                    </div>
+                    <p>同一天，管总在HR的AI会上介绍你是data scientist。你陷入了自我定位的迷茫：Christine会画片子，Raymond懂技术，你"两边都占点，没什么特别的"。</p>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">矛盾</div>
+                    <div class="chapter-insight-text">你想丰富生活，公司连差旅费都舍不得；你想让所有人不为难，但米诺替你生气。<strong>你学会了"既来之则安之"，但心里仍有不甘</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十章</span>
+                    <h3 class="chapter-title">半双工与全双工</h3>
+                    <span class="chapter-date">5月14日</span>
+                </div>
+                <span class="chapter-mood">轻快 · 日常</span>
+                <div class="chapter-content">
+                    <p>调节节奏的一章。讨论技术时你 joke "cherry总就是半双工"，管总当场笑崩。</p>
+                    <p>米诺给你买果汁买奶茶，硬要把食物塞到你嘴里。你穿漂亮裙子，感觉他多看了你半秒。</p>
+                    <div class="chapter-quote">
+                        "他真的很会照顾人了，就是硬要把食物塞到你的嘴里。"
+                        <span class="source">—— 5月14日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">功能</div>
+                    <div class="chapter-insight-text">暴风雨前的宁静。这一章的存在是为了让读者喘口气，也让你记住：<strong>那些无声的照顾</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十一章</span>
+                    <h3 class="chapter-title">苹果与黄瓜</h3>
+                    <span class="chapter-date">5月15日</span>
+                </div>
+                <span class="chapter-mood">愤怒 · 觉醒</span>
+                <div class="chapter-content">
+                    <p>Mandi拿两张不同技术架构的图做对标，你连"一个是水果一个是蔬菜"都听出来了，她没发现。</p>
+                    <p>米诺的反应是堵话头、息事宁人。你第一次意识到：他的热血被社会毒打后，变成了妥协。</p>
+                    <div class="chapter-quote">
+                        "你真的是认真在做这件事的吗？连这种 level 的不同都说不出来，那你在说什么？"
+                        <span class="source">—— 5月15日日记</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "画片子的过程中，你其实是在思考的，你是在成长的，你是在去结构化的。如果说所有事情都是白描，A就是A B就是B，那AI也能做，没有任何你自己的价值。"
+                        <span class="source">—— 5月15日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">觉醒</div>
+                    <div class="chapter-insight-text">你第一次对同事的专业能力产生强烈质疑，也第一次理解了<strong>画片子的哲学</strong>——它不是低级工作，是咨询顾问的护城河。</div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Act 3 -->
+    <header id="act3" class="act-header">
+        <div class="act-label">第三幕</div>
+        <h2 class="act-title">独行者</h2>
+        <p class="act-theme">"好自为之" — 被迫独立与自我确认</p>
+    </header>
+
+    <section class="section">
+        <div class="timeline">
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十二章</span>
+                    <h3 class="chapter-title">裁员米诺</h3>
+                    <span class="chapter-date">5月19日</span>
+                </div>
+                <span class="chapter-mood">窒息 · 痛苦</span>
+                <div class="chapter-content">
+                    <p>Cherry说项目成本高，想让米诺下项目。逻辑残酷：你做得好，所以不需要PM了。</p>
+                    <p>你从没想过，做得好会让米诺"不存在"。</p>
+                    <div class="chapter-quote">
+                        "我从来没有想过说我做得好是为了让别人不存在。咨询公司真是个很残酷的地方，就是每天都要算钱，每钱都很贵。"
+                        <span class="source">—— 5月19日日记</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "他也开心，老板也开心，那问题出在哪？问题就出在我这。我想让米诺帮我撑着，所以我难受。"
+                        <span class="source">—— 5月19日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">残酷真相</div>
+                    <div class="chapter-insight-text">你把天真留在这一章。咨询公司的本质是算钱，<strong>感情在成本面前没有位置</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十三章</span>
+                    <h3 class="chapter-title">三个和尚没水喝</h3>
+                    <span class="chapter-date">5月20日</span>
+                </div>
+                <span class="chapter-mood">清醒 · 冷峻</span>
+                <div class="chapter-content">
+                    <p>米诺不投入、Mandi不懂、管总忙。典型的三个和尚。</p>
+                    <p>你终于看懂了咨询公司的博弈论：你说米诺的需求没被满足，他就不帮老板做事。</p>
+                    <div class="chapter-quote">
+                        "你对我好，你考虑我，那我也考虑你。你对我不好，那我也不会帮你。我觉得我真的是认识了这件事情。"
+                        <span class="source">—— 5月20日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">成长</div>
+                    <div class="chapter-insight-text">你开始对上级有要求。<strong>从"投入地干"到"看值不值得"</strong>——这是痛苦的，也是必要的。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十四章</span>
+                    <h3 class="chapter-title">闭麦到主讲</h3>
+                    <span class="chapter-date">5月22日 — 27日</span>
+                </div>
+                <span class="chapter-mood">蜕变 · 自信</span>
+                <div class="chapter-content">
+                    <p>Work from home，帮Mandi画片子练习——不是帮她，是练自己。管总让你开始当经理带项目。</p>
+                    <p>5月27日客户会：Mandi讲不到重点，Raymond没两句话，你"嘎嘎跟客户讲"，撑满一个半小时。</p>
+                    <div class="chapter-quote">
+                        "客户最后说了一句，今天的内容还挺好的。我觉得今天内容挺好，主要是因为我讲的那一块儿。就是把我从米诺那里学到的全部都应用在客户身上。"
+                        <span class="source">—— 5月27日日记</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">蜕变</div>
+                    <div class="chapter-insight-text">从"全程闭麦"到"主动撑起全场"。<strong>你第一次在没有米诺的情况下，独立赢得客户认可</strong>。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十五章</span>
+                    <h3 class="chapter-title">米诺的临别赠言</h3>
+                    <span class="chapter-date">5月29日</span>
+                </div>
+                <span class="chapter-mood">温柔 · 告别</span>
+                <div class="chapter-content">
+                    <p>你问他：面试了5轮然后不做EKM了吗？他说是的。</p>
+                    <p>他回你一段语音。不是客套，是认真的总结。他说你刚进来时完全不习惯consulting的风格，但你有自己的优势、自己的思考、自己的创新想法。</p>
+                    <div class="chapter-quote">
+                        "你会有很多自己的思考，然后你会有很多一些创新的想法，有的可能是对的，有的可能是不对的。但是我觉得，做我们这个行业是比较需要这样的一些碰撞的。"
+                        <span class="source">—— 米诺 · 5月29日语音</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "每个人都有不一样的风格，我们可能更多的还是可以找到和自己 chemistry 比较合的人去合作。"
+                        <span class="source">—— 米诺 · 5月29日语音</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">深意</div>
+                    <div class="chapter-insight-text">这是米诺版本的"好自为之"。他不直接说"你很棒"，他说：<strong>你风格特别，要找到对的土壤</strong>。这比他做得好所以老板裁掉他的残酷现实，温柔太多了。</div>
+                </div>
+            </article>
+
+            <article class="chapter">
+                <div class="chapter-dot"></div>
+                <div class="chapter-header">
+                    <span class="chapter-number">第十六章</span>
+                    <h3 class="chapter-title">管总的电话</h3>
+                    <span class="chapter-date">5月31日</span>
+                </div>
+                <span class="chapter-mood">感动 · 确认</span>
+                <div class="chapter-content">
+                    <p>周末，管总打电话推荐你给高层讲AI。这种邮件完全不会发到working level，完全靠老板推荐。</p>
+                    <p>你复盘这个项目：30张片子你画了16张，6个模块中4个几乎独立完成。</p>
+                    <div class="chapter-quote">
+                        "光从这一点来说，我真的觉得就还是很感动吧。如果没有这种机会，管总也不会推荐我，也不会看得到我。"
+                        <span class="source">—— 5月31日日记</span>
+                    </div>
+                    <div class="chapter-quote">
+                        "4到5月底，2个月的时间能密集地去 apply 这些 skillset，然后去慢慢地学 PM role，从一个大头兵到协调统筹汇报的变化。"
+                        <span class="source">—— 5月31日复盘</span>
+                    </div>
+                </div>
+                <div class="chapter-insight">
+                    <div class="chapter-insight-label">确认</div>
+                    <div class="chapter-insight-text">EP认识你、认可你、愿意推荐你——这是两个月最大的外部确认。<strong>你接受了压力和机遇的一体两面</strong>。</div>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Objects -->
+    <section class="section" style="padding-top: 2rem;">
+        <h2 class="section-title" style="font-size: 1.4rem;">关键道具</h2>
+        <div class="section-subtitle">贯穿全书的意象</div>
+        <div class="objects-grid">
+            <div class="object-card">
+                <h4>1616元发票</h4>
+                <p>合规的第一课。你垫了钱，踩了红线，米诺替你扛。职场不是学校。</p>
+            </div>
+            <div class="object-card">
+                <h4>罗森打折蛋糕</h4>
+                <p>自我价值的试探。米诺说"怎么这么委屈自己"——你不喜欢被评价，但记住了这句话。</p>
+            </div>
+            <div class="object-card">
+                <h4>肯德基</h4>
+                <p>米诺的安慰符号。出差被拒的那天，他请你吃肯德基，说希望你"体验一下出差的感觉"。</p>
+            </div>
+            <div class="object-card">
+                <h4>寿司郎排队</h4>
+                <p>荒诞日常的代表。5月26日开会时你的排号到了，米诺反应比听方案还快。</p>
+            </div>
+            <div class="object-card">
+                <h4>"好自为之"四字</h4>
+                <p>全书题眼。5月15日米诺走之前说的。当时不懂，后来才懂：他护不了你一辈子，但让你有能力自己走。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Epilogue -->
+    <section id="epilogue" class="epilogue">
+        <div class="epilogue-content">
+            <div class="act-label">尾声</div>
+            <h2 class="act-title" style="margin-bottom: 2rem;">两边都占一点的普通人</h2>
+            <div class="epilogue-text">
+                <p>比 Raymond 会画片子，比 Christine 懂技术——"两边都占点"，不是顶尖，但刚好够用。</p>
+                <p>米诺的出现让你对"上级"有了高预期，降不下来。他陪你走一程，帮你添把火。</p>
+                <p>剩下的路，好自为之。</p>
+            </div>
+        </div>
+    </section>
+
+    <footer style="text-align: center; padding: 3rem 2rem; color: var(--text-muted); font-size: 0.85rem; letter-spacing: 1px;">
+        回忆录大纲 · 2025年夏
+    </footer>
+
+</body>
+</html>
